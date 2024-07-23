@@ -122,6 +122,7 @@ namespace CookingPrototype.Controllers {
 		/// Отпускаем указанного посетителя
 		/// </summary>
 		/// <param name="customer"></param>
+		
 		public void FreeCustomer(Customer customer) {
 			var place = CustomerPlaces.Find(x => x.CurCustomer == customer);
 			if ( place == null ) {
@@ -131,15 +132,42 @@ namespace CookingPrototype.Controllers {
 			GameplayController.Instance.CheckGameFinish();
 		}
 
-
 		/// <summary>
 		///  Пытаемся обслужить посетителя с заданным заказом и наименьшим оставшимся временем ожидания.
 		///  Если у посетителя это последний оставшийся заказ из списка, то отпускаем его.
 		/// </summary>
 		/// <param name="order">Заказ, который пытаемся отдать</param>
 		/// <returns>Флаг - результат, удалось ли успешно отдать заказ</returns>
+
 		public bool ServeOrder(Order order) {
-			throw  new NotImplementedException("ServeOrder: this feature is not implemented.");
+			List<Customer> customers = new List<Customer>();
+
+			foreach ( var place in CustomerPlaces ) {
+
+				if ( !place.IsFree && place.CurCustomer.OrderPlaces.Any(customerOrder => customerOrder.CurOrder == order) ) {
+					customers.Add(place.CurCustomer);
+				}
+			}
+
+			Customer customerMinWaitTime = customers[0];
+
+			foreach ( var customer in customers ) {
+
+				if ( customer.WaitTime < customerMinWaitTime.WaitTime ) {
+					customerMinWaitTime = customer;
+				}
+			}
+
+			if ( customerMinWaitTime.ServeOrder(order) ) {
+
+				if ( customerMinWaitTime.IsComplete ) {
+					FreeCustomer(customerMinWaitTime);
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 	}
 }
