@@ -1,5 +1,3 @@
-using System;
-
 using UnityEngine;
 
 using JetBrains.Annotations;
@@ -10,18 +8,30 @@ namespace CookingPrototype.Kitchen {
 
 		FoodPlace _place = null;
 		float     _timer = 0f;
+		float	  _doubleClickRate = 0.2f;
+		float	  _firstClickTime = 0f;
 
 		void Start() {
 			_place = GetComponent<FoodPlace>();
-			_timer = Time.realtimeSinceStartup;
 		}
 
 		/// <summary>
 		/// Освобождает место по двойному тапу если еда на этом месте сгоревшая.
 		/// </summary>
+
 		[UsedImplicitly]
 		public void TryTrashFood() {
-			throw new NotImplementedException("TryTrashFood: this feature is not implemented");
+			_timer = Time.realtimeSinceStartup;
+			float timeAfterFirstClick = _timer - _firstClickTime;
+
+			if ( timeAfterFirstClick < _doubleClickRate ) {
+
+				if ( !_place.IsFree && _place.CurFood.CurStatus == Food.FoodStatus.Overcooked ) {
+					_place.FreePlace();
+				}
+			}
+
+			_firstClickTime = _timer;
 		}
 	}
 }
