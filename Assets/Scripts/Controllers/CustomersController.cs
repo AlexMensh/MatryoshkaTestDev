@@ -11,6 +11,8 @@ using CookingPrototype.Kitchen;
 namespace CookingPrototype.Controllers {
 	public class CustomersController : MonoBehaviour {
 
+		private bool _canSpawnCustomers = false;
+
 		public static CustomersController Instance { get; private set; }
 
 		public int                 CustomersTargetNumber = 15;
@@ -56,7 +58,7 @@ namespace CookingPrototype.Controllers {
 		}
 
 		void Update() {
-			if ( !HasFreePlaces ) {
+			if ( !_canSpawnCustomers || !HasFreePlaces ) {
 				return;
 			}
 
@@ -68,6 +70,14 @@ namespace CookingPrototype.Controllers {
 
 			SpawnCustomer();
 			_timer = 0f;
+		}
+
+		public void StartSpawning() {
+			_canSpawnCustomers = true;
+		}
+
+		public void StopSpawning() {
+			_canSpawnCustomers = false;
 		}
 
 		void SpawnCustomer() {

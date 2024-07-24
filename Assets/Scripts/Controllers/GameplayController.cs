@@ -9,12 +9,14 @@ using JetBrains.Annotations;
 
 namespace CookingPrototype.Controllers {
 	public sealed class GameplayController : MonoBehaviour {
+
 		public static GameplayController Instance { get; private set; }
 
-		public GameObject TapBlock   = null;
+		public GameObject Machines;
+		public GameObject TapBlock = null;
+		public StartWindow StartWindow = null;
 		public WinWindow  WinWindow  = null;
 		public LoseWindow LoseWindow = null;
-
 
 		int _ordersTarget = 0;
 
@@ -43,10 +45,30 @@ namespace CookingPrototype.Controllers {
 			}
 		}
 
+		private void Start() {
+			ShowStartWindow();
+		}
+
 		void Init() {
 			TotalOrdersServed = 0;
 			Time.timeScale = 1f;
 			TotalOrdersServedChanged?.Invoke();
+		}
+
+		private void ShowStartWindow() {
+			StartWindow.Show();
+			TapBlock.SetActive(true);
+		}
+
+		public void StartGame() {
+			Machines.SetActive(true);
+			Time.timeScale = 1f;
+			CustomersController.Instance.StartSpawning();
+		}
+
+		private void StopGame() {
+			Machines.SetActive(false);
+			CustomersController.Instance.StopSpawning();
 		}
 
 		public void CheckGameFinish() {
@@ -91,6 +113,9 @@ namespace CookingPrototype.Controllers {
 			foreach ( var place in FindObjectsOfType<AbstractFoodPlace>() ) {
 				place.FreePlace();
 			}
+
+			StopGame();
+			ShowStartWindow();
 		}
 
 		public void CloseGame() {
