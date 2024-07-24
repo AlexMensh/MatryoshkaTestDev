@@ -21,7 +21,9 @@ namespace CookingPrototype.Kitchen {
 
 		[UsedImplicitly]
 		public void TryTrashFood() {
+
 			_timer = Time.realtimeSinceStartup;
+
 			float timeAfterFirstClick = _timer - _firstClickTime;
 
 			if ( timeAfterFirstClick < _doubleClickRate ) {

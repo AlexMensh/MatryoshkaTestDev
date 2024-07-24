@@ -140,6 +140,7 @@ namespace CookingPrototype.Controllers {
 		/// <returns>Флаг - результат, удалось ли успешно отдать заказ</returns>
 
 		public bool ServeOrder(Order order) {
+
 			List<Customer> customers = new List<Customer>();
 
 			foreach ( var place in CustomerPlaces ) {
@@ -147,6 +148,10 @@ namespace CookingPrototype.Controllers {
 				if ( !place.IsFree && place.CurCustomer.OrderPlaces.Any(customerOrder => customerOrder.CurOrder == order) ) {
 					customers.Add(place.CurCustomer);
 				}
+			}
+
+			if ( customers.Count == 0 ) {
+				return false;
 			}
 
 			Customer customerMinWaitTime = customers[0];
